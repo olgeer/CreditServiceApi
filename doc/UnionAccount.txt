@@ -1,0 +1,79 @@
+统一用户管理
+
+功能：
+1、账号管理（CRUD）
+2、权限管理（CRUD）
+3、角色管理（CRUD）
+4、登录状态管理（生命周期）
+5、Session管理（生命周期）
+6、授权策略
+7、应用管理（CRUD）
+
+静态关系
+账号 -》 应用集合 -》 角色集合 -》 权限集合
+
+动态关系
+账号状态 -》
+
+权限管理设计
+1、多维权限
+权限前缀代表维度，如模块、功能、界面、区域、应用、前后台等，每个维度有相应的权限，维度权限间的关系为与集，仅当所有维度权限匹配才判断为拥有权限。
+
+维度集合
+基础维度
+pf:应用/平台    eg: pf:bigdata
+env:环境        eg: env:prod
+model:模块      eg: model:frontui.credit.register
+
+数据维度
+room:机房       eg: room:yt
+zone:地区       eg: zone:hn
+network:网络    eg: network:cmcc
+
+维度从属关系
+pf > env > model.righttype.right [ > 数据维度 ]
+
+建立维度表及维度记录表
+
+dimension
+数据维度表 dimension
+id，name，描述，详细说明，type(0:main_dimension,1:data_dimension)
+
+数据维度记录表 dimension_value
+id，dimid，value，描述
+
+模块表字段 model_right
+id，platform，env，modelname，描述，详细说明
+
+维度记录表 model_right_value
+id，mr_id，righttype，right，描述
+
+权限相关维度表 medel_right_value_with_dimension
+id，right_id，dim_id
+
+类别
+righttype   权限类型  frontui、backui、appui、func、api
+room        机房  亚太yt、化龙hl
+zone        地区  华南hn、华中hz、北京bj
+network     网络  移动CMCC\联通CUCC\电信CTC\网通CNC\all
+env         环境  dev\sit\uat\prod
+
+程序限定权限范例：
+pf:bigdata,part:frontui.credit.register,env:prod
+
+应用 类别 权限
+pf:itsm.part:api.tableinfo.get
+
+应用 类别 权限
+pf:bigdata.zone:bj
+应用 模块 bigdata::account
+part:backui
+right:Create\Retrieve\Update\Delete
+zone:hn
+network:cmcc
+
+part:api
+right:Create\Retrieve\Update\Delete
+zone:hn
+network:cmcc
+2、

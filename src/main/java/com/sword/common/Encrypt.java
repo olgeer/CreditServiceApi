@@ -1,7 +1,6 @@
 package com.sword.common;
 
 import java.util.Base64;
-import java.util.List;
 
 import static com.sword.common.Util.concat;
 import static com.sword.common.Util.split;
@@ -12,7 +11,7 @@ import static com.sword.common.Util.split;
  * @author max
  */
 public class Encrypt {
-    private static Logger logger = Logger.newInstance(Encrypt.class);
+    private final static Logger logger = Logger.newInstance(Encrypt.class);
 
     private static final byte[] BASE_64_MAP = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
@@ -130,7 +129,7 @@ public class Encrypt {
     }
 
     public static void main(String[] avgs) {
-        String text = "{\"account\":\"olgeera1\",\"password\":\"test\",\"action\":\"getCreditReport\"}";
+        String text = "{\"account\":\"olgeer\",\"password\":\"test\",\"action\":\"getCreditReport\"}";
         String key = "unuse";
         String encoded = Encrypt.encode(text, key);
         Logger.console("Encode: " + encoded);

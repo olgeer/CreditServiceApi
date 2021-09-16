@@ -46,4 +46,20 @@ public class Account {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    public boolean vaild(){
+        boolean ret=false;
+        if(account!=null && account.length()>0){
+            if(password!=null && password.length()>0)ret=true;
+        }
+        return ret;
+    }
+
+    public boolean auth(){
+        if(vaild() && status){
+
+            return true;
+        }
+        return false;
+    }
 }

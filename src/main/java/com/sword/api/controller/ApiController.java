@@ -45,11 +45,11 @@ import java.io.IOException;
  *
  * @author max
  */
-public class CreditController {
+public class ApiController {
     @Autowired
     private Environment env;
 
-    private final static Logger logger = Logger.newInstance(CreditController.class);
+    private final static Logger logger = Logger.newInstance(ApiController.class);
 
     @RequestMapping(value = "/alive", method = RequestMethod.GET)
     public String alive() {

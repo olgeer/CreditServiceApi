@@ -49,6 +49,11 @@ public class SessionMgr {
         return resultArray;
     }
 
+    public static boolean login(String account,String password){
+        Account tmpAccount=new Account(account,password);
+        return tmpAccount.auth();
+    }
+
     public static boolean register(String account,String password) {
         boolean success=false;
         Account tmpAccount=new Account(account,password);

@@ -13,8 +13,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
-@RestController
-@RequestMapping("/api")
 /**
  * credit Controller
  * RequestPackage json format:
@@ -45,6 +43,8 @@ import java.io.IOException;
  *
  * @author max
  */
+@RestController
+@RequestMapping("/api")
 public class ApiController {
     @Autowired
     private Environment env;

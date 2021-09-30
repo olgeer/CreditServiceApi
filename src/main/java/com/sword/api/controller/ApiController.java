@@ -4,6 +4,7 @@ import com.sword.api.service.BookMgr;
 import com.sword.api.entity.communicate.*;
 import com.sword.api.entity.credit.BankStreamCmd;
 import com.sword.api.service.BankStream;
+import com.sword.api.service.BookSource;
 import com.sword.api.service.SessionMgr;
 import com.sword.common.Encrypt;
 import com.sword.common.Json;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * credit Controller
@@ -166,6 +168,32 @@ public class ApiController {
                     respP.setRespCode("0020");
                 } else {
                     respP.setRespCode("0024");
+                }
+            } else {
+                respP.setRespCode("0009");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return respP;
+    }
+
+    @RequestMapping(value = "/getUserSource", method = RequestMethod.POST)
+    public ResponsePackage getUserSource(@RequestBody String requestBody) {
+        ResponsePackage respP = new ResponsePackage();
+
+        try {
+            RequestPackage rp = Json.mapper.readValue(requestBody, RequestPackage.class);
+
+            //校验sessionKey是否合法
+            if (SessionMgr.sessionVaild(rp)) {
+                SessionCmd bsCmd = Json.mapper.readValue(Encrypt.decode(rp.getReqContext(), rp.getReqSessionKey()), SessionCmd.class);
+                List<String> sourceList = BookSource.getUserSources(bsCmd);
+                if (!sourceList.isEmpty()) {
+                    respP.setRespContext(Encrypt.encode(Json.mapper.writeValueAsString(sourceList), rp.getReqSessionKey()));
+                    respP.setRespCode("0040");
+                } else {
+                    respP.setRespCode("0044");
                 }
             } else {
                 respP.setRespCode("0009");

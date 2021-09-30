@@ -23,6 +23,12 @@ public class Account {
         this.status=true;
     }
 
+    public Account(String account,String password,boolean status){
+        this.account=account;
+        this.password=password;
+        this.status=status;
+    }
+
     public String getAccount() {
         return account;
     }

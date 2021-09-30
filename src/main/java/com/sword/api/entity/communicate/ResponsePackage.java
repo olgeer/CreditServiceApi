@@ -37,6 +37,10 @@ public class ResponsePackage {
         codeMap.setProperty("0031","收藏书籍列表保存成功");
         codeMap.setProperty("0034","收藏书籍列表获取失败");
         codeMap.setProperty("0035","收藏书籍列表保存失败");
+        codeMap.setProperty("0040","书籍源列表获取成功");
+        codeMap.setProperty("0041","书籍源列表保存成功");
+        codeMap.setProperty("0044","书籍源列表获取失败");
+        codeMap.setProperty("0045","书籍源列表保存失败");
     }
 
     public ResponsePackage() {
@@ -45,6 +49,10 @@ public class ResponsePackage {
     public ResponsePackage(String respCode, String respContext) {
         setRespCode(respCode);
         this.respContext = respContext;
+    }
+
+    public boolean callSuccess(){
+        return respCode!=null && respCode.compareTo("0000")==0;
     }
 
     public String getRespCode() {

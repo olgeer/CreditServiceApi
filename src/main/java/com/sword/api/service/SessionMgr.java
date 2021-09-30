@@ -5,12 +5,18 @@ import com.sword.api.entity.base.Account;
 import com.sword.api.entity.communicate.SessionlessCmd;
 import com.sword.api.entity.communicate.RequestPackage;
 import com.sword.api.entity.communicate.SessionKey;
+import com.sword.base.datasource.CommonDAO;
+import com.sword.base.datasource.CommonExample;
+import com.sword.base.datasource.DataSource;
 import com.sword.common.Json;
 import com.sword.common.Logger;
 import com.sword.common.ShortKey;
 //import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -32,11 +38,14 @@ public class SessionMgr {
     private static Map<String,String> accounts= new HashMap<String, String>();
     private static Map<String,String> sessions= new HashMap<String, String>();
     private static List<String> sessionQueue= new ArrayList<>();
-
+    private static Connection connection;
+    private static CommonDAO commonDAO;
 
     static {
 //        jedis = RedisManager.newInstance("127.0.0.1", 6379, null).getJedis();
         accounts.put("olgeermax","{\"account\":\"olgeermax\",\"password\":\"test\",\"status\":true}");
+        connection= DataSource.newInstance().getConn();
+        commonDAO=new CommonDAO("user",connection);
     }
 
     public static List<String> getAccountList(int length){
@@ -54,13 +63,36 @@ public class SessionMgr {
         return tmpAccount.auth();
     }
 
+    public static void preloadUser(){
+        ResultSet rs=commonDAO.selectByExample();
+        try {
+            while (rs.next()){
+                Account tmpAccount = new Account(rs.getString("user_name"), rs.getString("password"));
+                accounts.put(tmpAccount.getAccount(),Json.mapper.writeValueAsString(tmpAccount));
+            }
+            rs.close();
+            logger.info("Preload user to cache with "+accounts.size()+" record.");
+        } catch (SQLException | JsonProcessingException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public static boolean register(String account,String password) {
         boolean success=false;
-        Account tmpAccount=new Account(account,password);
 
         try {
-            accounts.put(account,Json.mapper.writeValueAsString(tmpAccount));
-            success=true;
+            if(!isExist(account)) {
+                CommonExample commonExample=new CommonExample();
+                CommonExample.Criteria valueCriteria=commonExample.createValueCriteria();
+                valueCriteria.addKeyValue("user_name",account);
+                valueCriteria.addKeyValue("password",password);
+                valueCriteria.addKeyValue("status",1);
+                commonDAO.insertByExample(commonExample);
+
+                Account tmpAccount = new Account(account, password);
+                accounts.put(account, Json.mapper.writeValueAsString(tmpAccount));
+                success = true;
+            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
